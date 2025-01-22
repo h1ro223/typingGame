@@ -119,19 +119,23 @@ rulesModal.style.display = "none";
 rulesModal.style.zIndex = "1000";
 document.body.appendChild(rulesModal);
 
-fetch("rule.txt")
-  .then((response) => response.text())
-  .then((text) => {
-    rulesModal.innerHTML = `
-            <h2>遊び方</h2>
-            <pre>${text}</pre>
-            <button id="close-rules">閉じる</button>
-        `;
-    const closeRulesButton = document.getElementById("close-rules");
-    closeRulesButton.addEventListener("click", () => {
-      rulesModal.style.display = "none";
+rulesButton.addEventListener("click", () => {
+  fetch("./rule.txt")
+    .then((response) => response.text())
+    .then((text) => {
+      rulesModal.innerHTML = `
+                <h2>遊び方</h2>
+                <pre>${text}</pre>
+                <button id="close-rules">閉じる</button>
+            `;
+      rulesModal.style.display = "block";
+
+      const closeRulesButton = document.getElementById("close-rules");
+      closeRulesButton.addEventListener("click", () => {
+        rulesModal.style.display = "none";
+      });
     });
-  });
+});
 
 // 設定ボタンのイベント
 settingsButton.addEventListener("click", () => {
