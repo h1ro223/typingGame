@@ -38,7 +38,9 @@ const timeElement = document.getElementById("time");
 const currentWordElement = document.getElementById("current-word");
 const inputBox = document.getElementById("input-box");
 const startButton = document.getElementById("start-button");
-const mistakeElement = document.createElement("div"); // ミスカウント表示要素
+const gameContainer = document.getElementById("game-container");
+const mistakeElement = document.createElement("div");
+mistakeElement.id = "mistake-counter";
 mistakeElement.textContent = `ミス: ${mistakes}`;
 mistakeElement.style.fontSize = "1.2rem";
 mistakeElement.style.color = "red";
@@ -56,26 +58,22 @@ const niceSounds = [
 const niceSilentSound = new Audio("./sounds/niceSilent.mp3");
 const badSound = new Audio("./sounds/bad.mp3");
 
-// 設定と遊び方ボタンのコンテナを作成
+// 設定ボタンと遊び方ボタンの追加
 const controlsContainer = document.createElement("div");
 controlsContainer.style.display = "flex";
 controlsContainer.style.justifyContent = "space-between";
 controlsContainer.style.marginBottom = "10px";
 
-// 設定ボタンの追加
 const settingsButton = document.createElement("button");
 settingsButton.textContent = "⚙ 設定";
 settingsButton.style.fontSize = "1rem";
 controlsContainer.appendChild(settingsButton);
 
-// 遊び方ボタンの追加
 const rulesButton = document.createElement("button");
 rulesButton.textContent = "📖 遊び方";
 rulesButton.style.fontSize = "1rem";
 controlsContainer.appendChild(rulesButton);
 
-// タイピングゲームの白いウィンドウ内にボタンを追加
-const gameContainer = document.querySelector("#game-container");
 gameContainer.insertBefore(controlsContainer, gameContainer.firstChild);
 
 // 設定モーダル作成
@@ -144,22 +142,18 @@ rulesButton.addEventListener("click", () => {
     });
 });
 
-// 設定ボタンのイベント
 settingsButton.addEventListener("click", () => {
   settingsModal.style.display = "block";
 });
 
-const closeSettingsButton = document.getElementById("close-settings");
-closeSettingsButton.addEventListener("click", () => {
+document.getElementById("close-settings").addEventListener("click", () => {
   settingsModal.style.display = "none";
 });
 
-const silentModeCheckbox = document.getElementById("silent-mode");
-silentModeCheckbox.addEventListener("change", (event) => {
+document.getElementById("silent-mode").addEventListener("change", (event) => {
   silentMode = event.target.checked;
 });
 
-// 音量調整
 const bgmVolumeInput = document.getElementById("bgm-volume");
 bgmVolumeInput.addEventListener("input", (event) => {
   bgmSound.volume = event.target.value / 100;
@@ -185,11 +179,11 @@ startButton.addEventListener("click", startGame);
 
 function startGame() {
   startButton.disabled = true;
-  startButton.style.backgroundColor = "#ccc"; // ボタンを灰色にする
+  startButton.style.backgroundColor = "#ccc";
   startButton.style.cursor = "not-allowed";
   startCountdown(() => {
     score = 0;
-    mistakes = 0; // ミスリセット
+    mistakes = 0;
     mistakeElement.textContent = `ミス: ${mistakes}`;
     timeLeft = 90;
     inputBox.value = "";
@@ -252,7 +246,7 @@ function countDown() {
 // ゲーム終了時の処理
 function endGame() {
   startButton.disabled = false;
-  startButton.style.backgroundColor = ""; // 元の色に戻す
+  startButton.style.backgroundColor = "";
   startButton.style.cursor = "pointer";
   inputBox.disabled = true;
   bgmSound.pause();
@@ -264,34 +258,23 @@ function showNewWord() {
   const wordObj = words[Math.floor(Math.random() * words.length)];
   currentWord = wordObj.romaji;
   currentWordElement.textContent = `${wordObj.kana} (${wordObj.romaji})`;
-
-  // 次の入力を示すガイド
-  const guideElement = document.getElementById("guide");
-  if (!guideElement) {
-    const newGuideElement = document.createElement("div");
-    newGuideElement.id = "guide";
-    newGuideElement.style.fontSize = "1.2rem";
-    newGuideElement.style.color = "blue";
-    newGuideElement.style.marginTop = "10px";
-    newGuideElement.textContent = `次に入力する文字: ${currentWord[0]}`;
-    gameContainer.appendChild(newGuideElement);
-  } else {
-    guideElement.textContent = `次に入力する文字: ${currentWord[0]}`;
-  }
 }
 
 // 入力の判定
 function checkInput() {
   const userInput = inputBox.value.toLowerCase().trim();
 
-  if (userInput.length > currentWord.length + 2) {
-    inputBox.value = ""; // 入力欄をリセット
-    badSound.currentTime = 0; // 再生をリセット
+  // 入力が現在の単語と一致しなければ入力を無効化
+  if (!currentWord.startsWith(userInput)) {
+    inputBox.value = userInput.slice(0, -1); // 最後の文字を削除してリセット
+    badSound.currentTime = 0;
     badSound.play();
     mistakes++;
     mistakeElement.textContent = `ミス: ${mistakes}`;
     return;
   }
+
+  // 単語が完全一致
   if (
     userInput === currentWord ||
     (currentWord.includes("xtu") &&
@@ -303,18 +286,13 @@ function checkInput() {
     showNewWord();
 
     if (silentMode) {
-      niceSilentSound.currentTime = 0; // 再生をリセット
+      niceSilentSound.currentTime = 0;
       niceSilentSound.play();
     } else {
       const randomNiceSound =
         niceSounds[Math.floor(Math.random() * niceSounds.length)];
-      randomNiceSound.currentTime = 0; // 再生をリセット
+      randomNiceSound.currentTime = 0;
       randomNiceSound.play();
     }
-  } else if (!currentWord.startsWith(userInput)) {
-    badSound.currentTime = 0; // 再生をリセット
-    badSound.play();
-    mistakes++;
-    mistakeElement.textContent = `ミス: ${mistakes}`;
   }
 }
