@@ -4,31 +4,32 @@ let timeLeft = 90; // 制限時間を90秒に変更
 let timer;
 let currentWord = "";
 let silentMode = false; // 静かモードの初期状態
+let mistakes = 0; // ミスカウント
 const words = [
-    { kana: "さくら", romaji: "sakura" },
-    { kana: "すし", romaji: "sushi" },
-    { kana: "たいやき", romaji: "taiyaki" },
-    { kana: "ねこ", romaji: "neko" },
-    { kana: "いぬ", romaji: "inu" },
-    { kana: "とうきょう", romaji: "toukyou" },
-    { kana: "おおさか", romaji: "oosaka" },
-    { kana: "やま", romaji: "yama" },
-    { kana: "きりん", romaji: "kirin" },
-    { kana: "かんがるー", romaji: "kangaroo" },
-    { kana: "しょうがっこう", romaji: "shougakkou" },
-    { kana: "ぱそこん", romaji: "pasokon" },
-    { kana: "すいか", romaji: "suika" },
-    { kana: "りんご", romaji: "ringo" },
-    { kana: "さとう", romaji: "satou" },
-    { kana: "くも", romaji: "kumo" },
-    { kana: "いんたーねっと", romaji: "inta-netto" },
-    { kana: "みずうみ", romaji: "mizuumi" },
-    { kana: "かみなり", romaji: "kaminari" },
-    { kana: "じてんしゃ", romaji: "jitensha" },
-    { kana: "でんしゃ", romaji: "densha" },
-    { kana: "あめ", romaji: "ame" },
-    { kana: "はなび", romaji: "hanabi" }
-    // ここにさらに多くのお題を追加可能
+  { kana: "さくら", romaji: "sakura" },
+  { kana: "すし", romaji: "sushi" },
+  { kana: "たいやき", romaji: "taiyaki" },
+  { kana: "ねこ", romaji: "neko" },
+  { kana: "いぬ", romaji: "inu" },
+  { kana: "とうきょう", romaji: "toukyou" },
+  { kana: "おおさか", romaji: "oosaka" },
+  { kana: "やま", romaji: "yama" },
+  { kana: "きりん", romaji: "kirin" },
+  { kana: "かんがるー", romaji: "kangaroo" },
+  { kana: "しょうがっこう", romaji: "shougakkou" },
+  { kana: "ぱそこん", romaji: "pasokon" },
+  { kana: "すいか", romaji: "suika" },
+  { kana: "りんご", romaji: "ringo" },
+  { kana: "さとう", romaji: "satou" },
+  { kana: "くも", romaji: "kumo" },
+  { kana: "いんたーねっと", romaji: "inta-netto" },
+  { kana: "みずうみ", romaji: "mizuumi" },
+  { kana: "かみなり", romaji: "kaminari" },
+  { kana: "じてんしゃ", romaji: "jitensha" },
+  { kana: "でんしゃ", romaji: "densha" },
+  { kana: "あめ", romaji: "ame" },
+  { kana: "はなび", romaji: "hanabi" },
+  // ここにさらに多くのお題を追加可能
 ];
 
 // DOM 要素の取得
@@ -37,14 +38,20 @@ const timeElement = document.getElementById("time");
 const currentWordElement = document.getElementById("current-word");
 const inputBox = document.getElementById("input-box");
 const startButton = document.getElementById("start-button");
+const mistakeElement = document.createElement("div"); // ミスカウント表示要素
+mistakeElement.textContent = `ミス: ${mistakes}`;
+mistakeElement.style.fontSize = "1.2rem";
+mistakeElement.style.color = "red";
+mistakeElement.style.marginTop = "10px";
+gameContainer.appendChild(mistakeElement);
 
 // サウンド要素の準備
 const startSound = new Audio("./sounds/start.mp3");
 const bgmSound = new Audio("./sounds/bgm.mp3");
 const niceSounds = [
-    new Audio("./sounds/nice1.mp3"),
-    new Audio("./sounds/nice2.mp3"),
-    new Audio("./sounds/nice3.mp3")
+  new Audio("./sounds/nice1.mp3"),
+  new Audio("./sounds/nice2.mp3"),
+  new Audio("./sounds/nice3.mp3"),
 ];
 const niceSilentSound = new Audio("./sounds/niceSilent.mp3");
 const badSound = new Audio("./sounds/bad.mp3");
@@ -120,55 +127,55 @@ rulesModal.style.zIndex = "1000";
 document.body.appendChild(rulesModal);
 
 rulesButton.addEventListener("click", () => {
-    fetch("./rule.txt")
-        .then(response => response.text())
-        .then(text => {
-            rulesModal.innerHTML = `
+  fetch("./rule.txt")
+    .then((response) => response.text())
+    .then((text) => {
+      rulesModal.innerHTML = `
                 <h2>遊び方</h2>
                 <pre>${text}</pre>
                 <button id="close-rules">閉じる</button>
             `;
-            rulesModal.style.display = "block";
+      rulesModal.style.display = "block";
 
-            const closeRulesButton = document.getElementById("close-rules");
-            closeRulesButton.addEventListener("click", () => {
-                rulesModal.style.display = "none";
-            });
-        });
+      const closeRulesButton = document.getElementById("close-rules");
+      closeRulesButton.addEventListener("click", () => {
+        rulesModal.style.display = "none";
+      });
+    });
 });
 
 // 設定ボタンのイベント
 settingsButton.addEventListener("click", () => {
-    settingsModal.style.display = "block";
+  settingsModal.style.display = "block";
 });
 
 const closeSettingsButton = document.getElementById("close-settings");
 closeSettingsButton.addEventListener("click", () => {
-    settingsModal.style.display = "none";
+  settingsModal.style.display = "none";
 });
 
 const silentModeCheckbox = document.getElementById("silent-mode");
 silentModeCheckbox.addEventListener("change", (event) => {
-    silentMode = event.target.checked;
+  silentMode = event.target.checked;
 });
 
 // 音量調整
 const bgmVolumeInput = document.getElementById("bgm-volume");
 bgmVolumeInput.addEventListener("input", (event) => {
-    bgmSound.volume = event.target.value / 100;
+  bgmSound.volume = event.target.value / 100;
 });
 
 const effectVolumeInput = document.getElementById("effect-volume");
 effectVolumeInput.addEventListener("input", (event) => {
-    niceSounds.forEach(sound => sound.volume = event.target.value / 100);
-    niceSilentSound.volume = event.target.value / 100;
-    startSound.volume = event.target.value / 100;
-    badSound.volume = event.target.value / 100;
+  niceSounds.forEach((sound) => (sound.volume = event.target.value / 100));
+  niceSilentSound.volume = event.target.value / 100;
+  startSound.volume = event.target.value / 100;
+  badSound.volume = event.target.value / 100;
 });
 
 // デフォルト音量を設定
 bgmSound.volume = 1;
-niceSounds.forEach(sound => sound.volume = 1);
+niceSounds.forEach((sound) => (sound.volume = 1));
 niceSilentSound.volume = 1;
 startSound.volume = 1;
 badSound.volume = 1;
@@ -177,109 +184,137 @@ badSound.volume = 1;
 startButton.addEventListener("click", startGame);
 
 function startGame() {
-    startButton.disabled = true;
-    startButton.style.backgroundColor = "#ccc"; // ボタンを灰色にする
-    startButton.style.cursor = "not-allowed";
-    startCountdown(() => {
-        score = 0;
-        timeLeft = 90;
-        inputBox.value = "";
-        inputBox.disabled = false;
-        inputBox.focus();
-        scoreElement.textContent = score;
-        timeElement.textContent = timeLeft;
+  startButton.disabled = true;
+  startButton.style.backgroundColor = "#ccc"; // ボタンを灰色にする
+  startButton.style.cursor = "not-allowed";
+  startCountdown(() => {
+    score = 0;
+    mistakes = 0; // ミスリセット
+    mistakeElement.textContent = `ミス: ${mistakes}`;
+    timeLeft = 90;
+    inputBox.value = "";
+    inputBox.disabled = false;
+    inputBox.focus();
+    scoreElement.textContent = score;
+    timeElement.textContent = timeLeft;
 
-        bgmSound.loop = true;
-        bgmSound.play();
+    bgmSound.loop = true;
+    bgmSound.play();
 
-        showNewWord();
-        timer = setInterval(countDown, 1000);
+    showNewWord();
+    timer = setInterval(countDown, 1000);
 
-        inputBox.addEventListener("input", checkInput);
-    });
+    inputBox.addEventListener("input", checkInput);
+  });
 }
 
 // カウントダウン処理
 function startCountdown(callback) {
-    let countdown = 3;
-    const countdownElement = document.createElement("div");
-    countdownElement.style.position = "absolute";
-    countdownElement.style.top = "50%";
-    countdownElement.style.left = "50%";
-    countdownElement.style.transform = "translate(-50%, -50%)";
-    countdownElement.style.fontSize = "3rem";
-    countdownElement.style.fontWeight = "bold";
-    document.body.appendChild(countdownElement);
+  let countdown = 3;
+  const countdownElement = document.createElement("div");
+  countdownElement.style.position = "absolute";
+  countdownElement.style.top = "50%";
+  countdownElement.style.left = "50%";
+  countdownElement.style.transform = "translate(-50%, -50%)";
+  countdownElement.style.fontSize = "3rem";
+  countdownElement.style.fontWeight = "bold";
+  document.body.appendChild(countdownElement);
 
-    const countdownInterval = setInterval(() => {
-        if (countdown > 0) {
-            countdownElement.textContent = countdown;
-            if (countdown === 3) {
-                startSound.play();
-            }
-            countdown--;
-        } else {
-            clearInterval(countdownInterval);
-            countdownElement.textContent = "スタート！";
-            setTimeout(() => {
-                document.body.removeChild(countdownElement);
-                callback();
-            }, 1000);
-        }
-    }, 1000);
+  const countdownInterval = setInterval(() => {
+    if (countdown > 0) {
+      countdownElement.textContent = countdown;
+      if (countdown === 3) {
+        startSound.play();
+      }
+      countdown--;
+    } else {
+      clearInterval(countdownInterval);
+      countdownElement.textContent = "スタート！";
+      setTimeout(() => {
+        document.body.removeChild(countdownElement);
+        callback();
+      }, 1000);
+    }
+  }, 1000);
 }
 
 // タイマーのカウントダウン
 function countDown() {
-    timeLeft--;
-    timeElement.textContent = timeLeft;
+  timeLeft--;
+  timeElement.textContent = timeLeft;
 
-    if (timeLeft <= 0) {
-        clearInterval(timer);
-        endGame();
-    }
+  if (timeLeft <= 0) {
+    clearInterval(timer);
+    endGame();
+  }
 }
 
 // ゲーム終了時の処理
 function endGame() {
-    startButton.disabled = false;
-    startButton.style.backgroundColor = ""; // 元の色に戻す
-    startButton.style.cursor = "pointer";
-    inputBox.disabled = true;
-    bgmSound.pause();
-    alert(`ゲーム終了！スコア: ${score}`);
+  startButton.disabled = false;
+  startButton.style.backgroundColor = ""; // 元の色に戻す
+  startButton.style.cursor = "pointer";
+  inputBox.disabled = true;
+  bgmSound.pause();
+  alert(`ゲーム終了！スコア: ${score}\nミス: ${mistakes}`);
 }
 
 // 新しいお題を表示
 function showNewWord() {
-    const wordObj = words[Math.floor(Math.random() * words.length)];
-    currentWord = wordObj.romaji;
-    currentWordElement.textContent = `${wordObj.kana} (${wordObj.romaji})`;
+  const wordObj = words[Math.floor(Math.random() * words.length)];
+  currentWord = wordObj.romaji;
+  currentWordElement.textContent = `${wordObj.kana} (${wordObj.romaji})`;
+
+  // 次の入力を示すガイド
+  const guideElement = document.getElementById("guide");
+  if (!guideElement) {
+    const newGuideElement = document.createElement("div");
+    newGuideElement.id = "guide";
+    newGuideElement.style.fontSize = "1.2rem";
+    newGuideElement.style.color = "blue";
+    newGuideElement.style.marginTop = "10px";
+    newGuideElement.textContent = `次に入力する文字: ${currentWord[0]}`;
+    gameContainer.appendChild(newGuideElement);
+  } else {
+    guideElement.textContent = `次に入力する文字: ${currentWord[0]}`;
+  }
 }
 
 // 入力の判定
 function checkInput() {
-    const userInput = inputBox.value.toLowerCase().trim();
+  const userInput = inputBox.value.toLowerCase().trim();
 
-    if (userInput.length > currentWord.length + 2) {
-        inputBox.value = ""; // 入力欄をリセット
-        badSound.currentTime = 0; // 再生をリセット
-        badSound.play();
-        return;
-    }
-    if (userInput === currentWord || (currentWord.includes("xtu") && userInput === currentWord.replace("xtu", "ttu"))) {
-        score++;
-        scoreElement.textContent = score;
-        inputBox.value = "";
-        showNewWord();
+  if (userInput.length > currentWord.length + 2) {
+    inputBox.value = ""; // 入力欄をリセット
+    badSound.currentTime = 0; // 再生をリセット
+    badSound.play();
+    mistakes++;
+    mistakeElement.textContent = `ミス: ${mistakes}`;
+    return;
+  }
+  if (
+    userInput === currentWord ||
+    (currentWord.includes("xtu") &&
+      userInput === currentWord.replace("xtu", "ttu"))
+  ) {
+    score++;
+    scoreElement.textContent = score;
+    inputBox.value = "";
+    showNewWord();
 
-        if (silentMode) {
-            niceSilentSound.currentTime = 0; // 再生をリセット
-            niceSilentSound.play();
-        } else {
-            const randomNiceSound = niceSounds[Math.floor(Math.random() * niceSounds.length)];
-            randomNiceSound.currentTime = 0; // 再生をリセット
-            randomNiceSound.play();
-        }
+    if (silentMode) {
+      niceSilentSound.currentTime = 0; // 再生をリセット
+      niceSilentSound.play();
+    } else {
+      const randomNiceSound =
+        niceSounds[Math.floor(Math.random() * niceSounds.length)];
+      randomNiceSound.currentTime = 0; // 再生をリセット
+      randomNiceSound.play();
     }
+  } else if (!currentWord.startsWith(userInput)) {
+    badSound.currentTime = 0; // 再生をリセット
+    badSound.play();
+    mistakes++;
+    mistakeElement.textContent = `ミス: ${mistakes}`;
+  }
 }
