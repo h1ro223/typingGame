@@ -274,11 +274,8 @@ function checkInput() {
   ) {
     score++;
     scoreElement.textContent = score;
-    inputBox.value = "";
-    inputBox.blur();
-    setTimeout(() => {
-      inputBox.focus();
-    }, 10); // 入力欄のバグを防ぐためのリセット
+    inputBox.value = ""; // 入力欄をクリア
+    showNewWord();
 
     if (silentMode) {
       niceSilentSound.currentTime = 0; // 再生をリセット
@@ -289,7 +286,5 @@ function checkInput() {
       randomNiceSound.currentTime = 0; // 再生をリセット
       randomNiceSound.play();
     }
-
-    showNewWord();
   }
 }
