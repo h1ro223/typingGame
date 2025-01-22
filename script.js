@@ -177,13 +177,15 @@ badSound.volume = 1;
 startButton.addEventListener("click", startGame);
 
 function startGame() {
+  startButton.disabled = true;
+  startButton.style.backgroundColor = "#ccc"; // ボタンを灰色にする
+  startButton.style.cursor = "not-allowed";
   startCountdown(() => {
     score = 0;
     timeLeft = 90;
     inputBox.value = "";
     inputBox.disabled = false;
     inputBox.focus();
-    startButton.disabled = true;
     scoreElement.textContent = score;
     timeElement.textContent = timeLeft;
 
@@ -241,6 +243,8 @@ function countDown() {
 // ゲーム終了時の処理
 function endGame() {
   startButton.disabled = false;
+  startButton.style.backgroundColor = ""; // 元の色に戻す
+  startButton.style.cursor = "pointer";
   inputBox.disabled = true;
   bgmSound.pause();
   alert(`ゲーム終了！スコア: ${score}`);
@@ -256,8 +260,10 @@ function showNewWord() {
 // 入力の判定
 function checkInput() {
   const userInput = inputBox.value.toLowerCase().trim();
+
   if (userInput.length > currentWord.length + 2) {
     inputBox.value = ""; // 入力欄をリセット
+    badSound.currentTime = 0; // 再生をリセット
     badSound.play();
     return;
   }
@@ -275,10 +281,12 @@ function checkInput() {
     }, 10); // 入力欄のバグを防ぐためのリセット
 
     if (silentMode) {
+      niceSilentSound.currentTime = 0; // 再生をリセット
       niceSilentSound.play();
     } else {
       const randomNiceSound =
         niceSounds[Math.floor(Math.random() * niceSounds.length)];
+      randomNiceSound.currentTime = 0; // 再生をリセット
       randomNiceSound.play();
     }
 
