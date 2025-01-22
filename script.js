@@ -76,12 +76,12 @@ settingsModal.innerHTML = `
 `;
 
 // サウンド要素の準備
-const startSound = new Audio("../sounds/start.mp3");
-const bgmSound = new Audio("../sounds/bgm2.mp3");
+const startSound = new Audio("sounds/start.mp3");
+const bgmSound = new Audio("sounds/bgm2.mp3");
 const niceSounds = [
-  new Audio("../sounds/nice1.mp3"),
-  new Audio("../sounds/nice2.mp3"),
-  new Audio("../sounds/nice3.mp3"),
+  new Audio("sounds/nice1.mp3"),
+  new Audio("sounds/nice2.mp3"),
+  new Audio("sounds/nice3.mp3"),
 ];
 
 // 設定ボタンのイベント
