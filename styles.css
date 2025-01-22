@@ -1,0 +1,61 @@
+/* 全体のデザイン */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f8ff;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+#game-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+h1 {
+  color: #333;
+}
+
+#game-info {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+#sushi-area {
+  background-color: #ffebcd;
+  padding: 20px;
+  margin: 20px 0;
+  border: 2px solid #d2691e;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+#input-box {
+  width: calc(100% - 40px);
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+}
+
+#start-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#start-button:hover {
+  background-color: #218838;
+}
