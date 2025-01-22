@@ -119,7 +119,7 @@ rulesModal.style.display = "none";
 rulesModal.style.zIndex = "1000";
 document.body.appendChild(rulesModal);
 
-fetch("./rule.txt")
+fetch("rule.txt")
   .then((response) => response.text())
   .then((text) => {
     rulesModal.innerHTML = `
