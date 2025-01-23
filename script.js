@@ -29,6 +29,22 @@ const words = [
   { kana: "でんしゃ", romaji: "densha" },
   { kana: "あめ", romaji: "ame" },
   { kana: "はなび", romaji: "hanabi" },
+  { kana: "かさ", romaji: "kasa" },
+    { kana: "てがみ", romaji: "tegami" },
+    { kana: "きっぷ", romaji: "kippu" },
+    { kana: "えんぴつ", romaji: "enpitsu" },
+    { kana: "けいたい", romaji: "keitai" },
+    { kana: "かんらんしゃ", romaji: "kanransha" },
+    { kana: "しんかんせん", romaji: "shinkansen" },
+    { kana: "とうだい", romaji: "toudai" },
+    { kana: "はくぶつかん", romaji: "hakubutsukan" },
+    { kana: "びじゅつかん", romaji: "bijutsukan" },
+    { kana: "おんがく", romaji: "ongaku" },
+    { kana: "たいよう", romaji: "taiyou" },
+    { kana: "つきみ", romaji: "tsukimi" },
+    { kana: "たなばた", romaji: "tanabata" },
+    { kana: "ゆきだるま", romaji: "yukidaruma" },
+    { kana: "さくらもち", romaji: "sakuramochi" }
   // ここにさらに多くのお題を追加可能
 ];
 
